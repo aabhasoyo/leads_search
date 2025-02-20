@@ -3,6 +3,12 @@ import streamlit as st
 # Set Page Config (Must be the first Streamlit command)
 st.set_page_config(page_title="🏡 Discover Leads", layout="wide")
 
+import pandas as pd
+import folium
+from streamlit_folium import folium_static
+from scipy.spatial import cKDTree
+import numpy as np
+
 # Hardcoded login credentials (Replace with a secure method later)
 VALID_USERNAME = "admin"
 VALID_PASSWORD = "password123"
@@ -26,12 +32,6 @@ if not st.session_state.authenticated:
             st.error("Invalid username or password")
 
     st.stop()  # Stop execution here if not authenticated
-
-import pandas as pd
-import folium
-from streamlit_folium import folium_static
-from scipy.spatial import cKDTree
-import numpy as np
 
 # Your app content starts here
 st.write(f"✅ **Welcome, {st.session_state['username']}!** You are now logged in.")

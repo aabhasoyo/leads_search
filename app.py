@@ -5,6 +5,33 @@ from streamlit_folium import folium_static
 from scipy.spatial import cKDTree
 import numpy as np
 
+# Load credentials from Streamlit Secrets
+USER_CREDENTIALS = st.secrets["credentials"]
+
+def login():
+    st.sidebar.title("🔐 Login")
+    username = st.sidebar.text_input("Username")
+    password = st.sidebar.text_input("Password", type="password")
+
+    if st.sidebar.button("Login"):
+        if username in USER_CREDENTIALS and USER_CREDENTIALS[username] == password:
+            st.session_state["authenticated"] = True
+            st.session_state["username"] = username
+            st.sidebar.success(f"✅ Welcome, {username}!")
+        else:
+            st.sidebar.error("❌ Invalid credentials. Try again.")
+
+# Ensure authentication
+if "authenticated" not in st.session_state:
+    st.session_state["authenticated"] = False
+
+if not st.session_state["authenticated"]:
+    login()
+    st.stop()  # Stop the app until logged in
+
+# Your app content starts here
+st.write(f"✅ **Welcome, {st.session_state['username']}!** You are now logged in.")
+
 # Set Page Config
 st.set_page_config(page_title="🏡 Discover Leads", layout="wide")
 

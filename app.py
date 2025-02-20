@@ -16,17 +16,18 @@ VALID_PASSWORD = "password123"
 # Initialize session state for authentication
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
-
+    
 # Authentication form in the main page
 if not st.session_state.authenticated:
-    st.markdown("<h2 style='text-align: center;'>🔑 Login to Access Leads</h2>", unsafe_allow_html=True)
-    
+    st.markdown("<h2 style='text-align: center;'>🔑 Login to Access Leads</h2>",
+                
     username = st.text_input("Username", placeholder="Enter username")
     password = st.text_input("Password", type="password", placeholder="Enter password")
 
     if st.button("Login"):
         if username == VALID_USERNAME and password == VALID_PASSWORD:
             st.session_state.authenticated = True
+            st.session_state.username = username
             st.experimental_rerun()
         else:
             st.error("Invalid username or password")

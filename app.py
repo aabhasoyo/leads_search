@@ -16,26 +16,29 @@ VALID_PASSWORD = "password123"
 # Initialize session state for authentication
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
-    
+
+if "username" not in st.session_state:
+    st.session_state.username = None
+
 # Authentication form in the main page
 if not st.session_state.authenticated:
     st.markdown("<h2 style='text-align: center;'>🔑 Login to Access Leads</h2>")
-                
+
     username = st.text_input("Username", placeholder="Enter username")
     password = st.text_input("Password", type="password", placeholder="Enter password")
 
     if st.button("Login"):
         if username == VALID_USERNAME and password == VALID_PASSWORD:
             st.session_state.authenticated = True
-            st.session_state.username = username
-            st.experimental_rerun()
+            st.session_state.username = username  # Store username
+            st.rerun()  # Restart Streamlit script (use st.rerun instead of experimental_rerun)
         else:
             st.error("Invalid username or password")
 
     st.stop()  # Stop execution here if not authenticated
 
-# Your app content starts here
-st.write(f"✅ **Welcome, {st.session_state['username']}!** You are now logged in.")
+# If logged in, show welcome message
+st.write(f"✅ **Welcome, {st.session_state.username}!** You are now logged in.")
 
 # Load dataset
 @st.cache_data

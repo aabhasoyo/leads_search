@@ -22,7 +22,7 @@ if "username" not in st.session_state:
 
 # Authentication form in the main page
 if not st.session_state.authenticated:
-    st.markdown("<h2 style='text-align: center;'>🔑 Login to Access Leads</h2>")
+    st.markdown("<h2 style='text-align: center;'>🔑 Login to Access Leads</h2>", unsafe_allow_html=True)
 
     username = st.text_input("Username", placeholder="Enter username")
     password = st.text_input("Password", type="password", placeholder="Enter password")

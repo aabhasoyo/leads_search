@@ -11,7 +11,8 @@ st.set_page_config(page_title="🏡 Discover Leads", layout="wide")
 # Load dataset
 @st.cache_data
 def load_data():
-    return pd.read_csv(r"C:\Users\AabhasAgrawal\Desktop\properties.csv", encoding="ISO-8859-1")
+    return pd.read_csv("properties.csv", encoding="ISO-8859-1")
+
 
 data = load_data()
 

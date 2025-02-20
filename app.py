@@ -1,4 +1,8 @@
 import streamlit as st
+
+# Set Page Config
+st.set_page_config(page_title="🏡 Discover Leads", layout="wide")
+
 import pandas as pd
 import folium
 from streamlit_folium import folium_static
@@ -31,9 +35,6 @@ if not st.session_state["authenticated"]:
 
 # Your app content starts here
 st.write(f"✅ **Welcome, {st.session_state['username']}!** You are now logged in.")
-
-# Set Page Config
-st.set_page_config(page_title="🏡 Discover Leads", layout="wide")
 
 # Load dataset
 @st.cache_data

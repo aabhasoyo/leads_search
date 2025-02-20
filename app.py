@@ -10,15 +10,15 @@ from scipy.spatial import cKDTree
 import numpy as np
 
 # Hardcoded login credentials (Replace with a secure method later)
-VALID_USERNAME = "admin"
-VALID_PASSWORD = "password123"
+VALID_CREDENTIALS = {
+    "kapilraina": "kapil123",
+    "aabhas": "aabhas123",
+    "admin": "password123"
+}
 
 # Initialize session state for authentication
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
-
-if "username" not in st.session_state:
-    st.session_state.username = None
 
 # Authentication form in the main page
 if not st.session_state.authenticated:
@@ -28,10 +28,10 @@ if not st.session_state.authenticated:
     password = st.text_input("Password", type="password", placeholder="Enter password")
 
     if st.button("Login"):
-        if username == VALID_USERNAME and password == VALID_PASSWORD:
+        if username in VALID_CREDENTIALS and password == VALID_CREDENTIALS[username]:
             st.session_state.authenticated = True
-            st.session_state.username = username  # Store username
-            st.rerun()  # Restart Streamlit script (use st.rerun instead of experimental_rerun)
+            st.session_state.username = username
+            st.experimental_rerun()
         else:
             st.error("Invalid username or password")
 

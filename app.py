@@ -37,8 +37,8 @@ if not st.session_state.authenticated:
 
     st.stop()  # Stop execution here if not authenticated
 
-# If logged in, show welcome message
-st.write(f"✅ **Welcome, {st.session_state.username}!** You are now logged in.")
+# # If logged in, show welcome message
+# st.write(f"✅ **Welcome, {st.session_state.username}!** You are now logged in.")
 
 # Load dataset
 @st.cache_data
@@ -84,7 +84,7 @@ if search_type == "📍 Latitude/Longitude":
     distances, indices = tree.query(query_point, k=10, distance_upper_bound=radius/111)
     indices = indices[distances != np.inf]  # Remove invalid results
     results = data.iloc[indices].copy()
-    results["Distance (km)"] = np.round(distances[distances != np.inf] * 111, 2)  # Approximate conversion
+    results["Distance (km)"] = np.round(distances[distances != np.inf] * 111,2)  # Approximate conversion
     results.sort_values(by="Distance (km)", inplace=True)
 
 elif search_type == "🌍 Location":
@@ -140,7 +140,47 @@ if "Website" in results.columns:
 results["Navigate"] = results.apply(lambda row: f'<a href="https://www.google.com/maps/dir/?api=1&destination={row["Latitude"]},{row["Longitude"]}" target="_blank">🗺️ Open in Maps</a>' if pd.notna(row["Latitude"]) and pd.notna(row["Longitude"]) else "", axis=1)
 
 # Display Data in a Responsive Table
-st.markdown(results[display_cols].to_html(escape=False, index=False), unsafe_allow_html=True)
+# Custom CSS for professional table styling
+st.markdown("""
+    <style>
+        /* Table Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 8px;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px;
+            text-align: center;
+        }
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            text-align: center;
+        }
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        a {
+            color: #1E88E5;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
+# Display improved table
+styled_table = results[display_cols].to_html(escape=False, index=False)
+st.markdown(styled_table, unsafe_allow_html=True)
+
 
 import base64
 
@@ -163,26 +203,6 @@ def generate_share_link():
 
 share_link = generate_share_link()
 st.text_input("🔗 Shareable Link", share_link)
-
-# Floating Action Button (FAB) - Scroll to Top
-st.markdown("""
-    <style>
-        .floating-btn {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 15px;
-            border-radius: 50%;
-            font-size: 18px;
-            cursor: pointer;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-        }
-    </style>
-    <button onclick="window.scrollTo({top: 0, behavior: 'smooth'});" class="floating-btn">🔝</button>
-""", unsafe_allow_html=True)
 
 # Footer
 st.markdown("<hr>", unsafe_allow_html=True)

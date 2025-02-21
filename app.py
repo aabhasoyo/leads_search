@@ -70,7 +70,8 @@ st.markdown("<h3 style='text-align: center;'>Discover Leads Near You Effortlessl
 st.divider()
 
 # Sidebar: Search Options
-st.sidebar.header("🔍 Search Parameters")
+with st.sidebar:
+    st.markdown("<h2 style='text-align: center;'>🎛️ Filters (Expand on Mobile ☰)</h2>", unsafe_allow_html=True)
 search_type = st.sidebar.radio("Search by", ["📍 Latitude/Longitude", "🌍 Location"])
 
 # User input

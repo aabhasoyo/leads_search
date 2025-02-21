@@ -13,16 +13,7 @@ st.set_page_config(page_title="🏡 Discover Leads", layout="wide")
 #     </style>
 # """, unsafe_allow_html=True)
 
-# Force Header to Always Be Visible on Mobile
-st.markdown("""
-    <style>
-        [data-testid="stToolbar"] {
-            visibility: visible !important;
-            opacity: 1 !important;
-            display: block !important;
-        }
-    </style>
-""", unsafe_allow_html=True)
+
 
 import pandas as pd
 import folium
@@ -87,6 +78,19 @@ st.markdown("""
 
 # Title and Description
 st.markdown("<h1 style='text-align: center; color: #4CAF50;'>Leads Search Portal</h1>", unsafe_allow_html=True)
+# Detect if user is on mobile (based on screen width)
+is_mobile = st.session_state.get("is_mobile", False)
+
+if st.button("🔍 Show Filters (Sidebar)"):
+    st.markdown("""
+        <script>
+            var sidebar = window.parent.document.querySelector('[data-testid="stSidebar"]');
+            if (sidebar) {
+                sidebar.style.display = 'block';
+            }
+        </script>
+    """, unsafe_allow_html=True)
+
 st.markdown("<h3 style='text-align: center;'>Discover Leads Near You Effortlessly! 🔍</h3>", unsafe_allow_html=True)
 st.divider()
 

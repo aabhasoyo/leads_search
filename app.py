@@ -28,20 +28,25 @@ query_params = st.query_params
 shared_mode = bool(query_params)  # If URL has params, it's a shared link
 
 if shared_mode:
-    query_params = st.query_params
+    # Extract query parameters
+    query_params = st.experimental_get_query_params()
+    lat = float(query_params.get("lat", [0])[0])  # Default 0 to avoid errors
+    lng = float(query_params.get("lng", [0])[0])
+    radius = float(query_params.get("radius", [10])[0])
 
-    # If searching by Lat/Lng
-    if "lat" in query_params and "lng" in query_params:
-        lat = float(query_params["lat"])
-        lng = float(query_params["lng"])
-        radius = float(query_params.get("radius", 10))  # Default radius = 10km
+    query_point = np.array([lat, lng])
 
-        query_point = np.array([lat, lng])
-        distances, indices = tree.query(query_point, k=10, distance_upper_bound=radius / 111)
-        indices = indices[distances != np.inf]
-        results = data.iloc[indices].copy()
-        results["Distance (km)"] = np.round(distances[distances != np.inf] * 111, 2)
-        results.sort_values(by="Distance (km)", inplace=True)
+    # 🔹 Ensure `tree` is initialized before using it
+    if "tree" not in globals():
+        from scipy.spatial import KDTree
+        coordinates = data[["Latitude", "Longitude"]].dropna().values
+        tree = KDTree(coordinates)
+
+    distances, indices = tree.query(query_point, k=10, distance_upper_bound=radius / 111)
+    indices = indices[distances != np.inf]
+    results = data.iloc[indices].copy()
+    results["Distance (km)"] = np.round(distances[distances != np.inf] * 111, 2)
+    results.sort_values(by="Distance (km)", inplace=True)
 
     # If searching by Country/Region
     elif "country" in query_params:

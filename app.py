@@ -124,7 +124,24 @@ st.markdown("""
         table { width: 100%; border-collapse: collapse; border-radius: 8px; overflow: hidden; font-family: Arial, sans-serif; font-size: 14px; text-align: center !important; }
         th { background-color: #4CAF50; color: white; padding: 12px; text-align: center !important; vertical-align: middle !important; }
         td { padding: 10px; border-bottom: 1px solid #ddd; text-align: center !important; vertical-align: middle !important; }
-        tr:hover { background-color: #f5f5f5; }
+        
+        # tr:hover { background-color: #f5f5f5; }
+        <style>
+            table { width: 100%; border-collapse: collapse; border-radius: 8px; overflow: hidden; font-family: Arial, sans-serif; font-size: 14px; text-align: center !important; }
+            th { background-color: #4CAF50; color: white; padding: 12px; text-align: center !important; vertical-align: middle !important; }
+            td { padding: 10px; border-bottom: 1px solid #ddd; text-align: center !important; vertical-align: middle !important; }
+            tr:hover { background-color: rgba(100, 100, 100, 0.4) !important; } /* Softer gray hover */
+            a { color: #1E88E5; text-decoration: none; font-weight: bold; }
+            a:hover { text-decoration: underline; }
+    
+            /* Dark Mode Handling */
+            @media (prefers-color-scheme: dark) {
+                table { color: #ddd; }  /* Light text in dark mode */
+                th { background-color: #388E3C; } /* Darker green for dark mode */
+                tr:hover { background-color: rgba(200, 200, 200, 0.2) !important; } /* Light gray hover for dark mode */
+            }
+        </style>
+        
         a { color: #1E88E5; text-decoration: none; font-weight: bold; }
         a:hover { text-decoration: underline; }
     </style>

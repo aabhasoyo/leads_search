@@ -200,7 +200,7 @@ st.markdown(href, unsafe_allow_html=True)
 
 # Shareable Link
 def generate_share_link():
-    base_url = "https://leads-app.streamlit.app/?"
+    base_url = "https://oyoleads.streamlit.app/?"
     params = {}
 
     if search_type == "📍 Latitude/Longitude":

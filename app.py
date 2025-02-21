@@ -29,7 +29,6 @@ if lat and lng and radius:
 # If parameters exist, set view mode to shared
 is_shared_view = bool(lat and lng and radius) or bool(country)
 
-
 # Hardcoded login credentials (Replace with a secure method later)
 VALID_CREDENTIALS = {
     "kapilraina": "kapil123",
@@ -91,17 +90,14 @@ print(data.head())
 # Define sources safely
 sources = data["Source"].unique().tolist() if "Source" in data.columns else []
 
-# Ensure sources is always defined
-sources = data["Source"].unique().tolist() if "Source" in data.columns else []
-selected_source = st.sidebar.selectbox("Filter by Source", ["All"] + sources, key="selected_source_filter")
+# Ensure results is always initialized
+results = pd.DataFrame()
 
 if not is_shared_view:
     st.sidebar.header("🔎 Search & Filter Options")
     
     search_type = st.sidebar.radio("Search by", ["📍 Latitude/Longitude", "🌍 Location"])
 
-    results = pd.DataFrame()
-    
     if search_type == "📍 Latitude/Longitude":
         lat = st.sidebar.number_input("Enter Latitude", value=46.94412, format="%f")
         lng = st.sidebar.number_input("Enter Longitude", value=14.70255, format="%f")
@@ -113,9 +109,9 @@ if not is_shared_view:
         region = st.sidebar.selectbox("🏙️ Select Region", region_options)
 
     # Define filters only if not in shared view
-    selected_source = st.sidebar.selectbox("Filter by Source", ["All"] + sources)
-    hide_nan_email = st.sidebar.checkbox("Hide rows without Email")
-    hide_nan_phone = st.sidebar.checkbox("Hide rows without Phone Number")
+    selected_source = st.sidebar.selectbox("Filter by Source", ["All"] + sources, key="selected_source_filter")
+    hide_nan_email = st.sidebar.checkbox("Hide rows without Email", key="hide_email")
+    hide_nan_phone = st.sidebar.checkbox("Hide rows without Phone Number", key="hide_phone")
 
 # If shared view, set filters directly
 if is_shared_view:
@@ -130,12 +126,9 @@ if is_shared_view:
     elif country:
         results = data[data["Country"] == country].copy() if region == "All" else data[(data["Country"] == country) & (data["Region"] == region)].copy()
 
-# Additional Filters
-sources = sorted(data["Source"].dropna().unique())
-
-# Sorting
-sort_by = st.sidebar.selectbox("Sort results by", ["Distance (km)", "Rating", "Review Count"])
-if sort_by in results.columns:
+# Sorting (Ensure results exist before sorting)
+sort_by = st.sidebar.selectbox("Sort results by", ["Distance (km)", "Rating", "Review Count"], key="sort_by")
+if not results.empty and sort_by in results.columns:
     results = results.sort_values(by=sort_by, ascending=(sort_by != "Rating"))
 
 # Display Results
@@ -155,50 +148,36 @@ if "Website" in results.columns:
     results["Website"] = results["Website"].apply(lambda x: f'<a href="{x}" target="_blank">🌐 Visit</a>' if pd.notna(x) else "")
 
 # Add Google Maps Navigation Link
-results["Navigate"] = results.apply(lambda row: f'<a href="https://www.google.com/maps/dir/?api=1&destination={row["Latitude"]},{row["Longitude"]}" target="_blank">🗺️ Open in Maps</a>' if pd.notna(row["Latitude"]) and pd.notna(row["Longitude"]) else "", axis=1)
+if "Latitude" in results.columns and "Longitude" in results.columns:
+    results["Navigate"] = results.apply(lambda row: f'<a href="https://www.google.com/maps/search/?api=1&query={row["Latitude"]},{row["Longitude"]}" target="_blank">📍 Open in Maps</a>', axis=1)
 
-st.markdown("""
-    <style>
-        table { width: 100%; border-collapse: collapse; border-radius: 8px; overflow: hidden; font-family: Arial, sans-serif; font-size: 14px; text-align: center !important; }
-        th { background-color: #4CAF50; color: white; padding: 12px; text-align: center !important; vertical-align: middle !important; }
-        td { padding: 10px; border-bottom: 1px solid #ddd; text-align: center !important; vertical-align: middle !important; }
-        tr:hover { background-color: rgba(100, 100, 100, 0.4) !important; } /* Softer gray hover */
-        
-        a { color: #1E88E5; text-decoration: none; font-weight: bold; }
-        a:hover { text-decoration: underline; }
+# Apply Filters
+if selected_source != "All":
+    results = results[results["Source"] == selected_source]
 
-        /* Dark Mode Handling */
-        @media (prefers-color-scheme: dark) {
-            table { color: #ddd; }  /* Light text in dark mode */
-            th { background-color: #388E3C; } /* Darker green for dark mode */
-            tr:hover { background-color: rgba(200, 200, 200, 0.2) !important; } /* Light gray hover for dark mode */
-        }
-    </style>
-""", unsafe_allow_html=True)
+if hide_nan_email:
+    results = results[results["Email"].notna()]
 
-# Display Table
-# Ensure only existing columns are used
-available_cols = [col for col in display_cols if col in results.columns]
-styled_table = results[available_cols].to_html(escape=False, index=False)
-st.markdown(styled_table, unsafe_allow_html=True)
+if hide_nan_phone:
+    results = results[results["Phone Number"].notna()]
 
-# Export CSV Button
-if not is_shared_view:
-    st.subheader("📤 Export & Share")
-    csv_data = results.to_csv(index=False).encode('utf-8')
-    b64 = base64.b64encode(csv_data).decode()
-    href = f'<a href="data:file/csv;base64,{b64}" download="filtered_results.csv">📥 Download CSV</a>'
-    st.markdown(href, unsafe_allow_html=True)
+# Display Filtered Results
+st.write(results.to_html(escape=False, index=False), unsafe_allow_html=True)
 
-    # Generate Shareable Link
-    def generate_share_link():
-        base_url = "https://leads-app.streamlit.app?"
-        query_params = f"lat={lat}&lng={lng}&radius={radius}" if search_type == "📍 Latitude/Longitude" else f"country={country}&region={region}"
-        return f"{base_url}{query_params}"
+# Map Display
+if not results.empty:
+    st.subheader("📍 Property Locations on Map")
+    map_center = [results["Latitude"].mean(), results["Longitude"].mean()]
+    m = folium.Map(location=map_center, zoom_start=6)
 
-    share_link = generate_share_link()
-    st.text_input("🔗 Shareable Link", share_link)
+    for _, row in results.iterrows():
+        folium.Marker(
+            [row["Latitude"], row["Longitude"]],
+            popup=f'<b>{row["Name"]}</b><br>{row["Address"]}<br><a href="{row["Property Link"]}" target="_blank">View Details</a>',
+            tooltip=row["Name"]
+        ).add_to(m)
+
+    folium_static(m)
 
 # Footer
-st.markdown("<hr>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center;'>🚀 Developed by Aabhas</p>", unsafe_allow_html=True)
+st.markdown("<h4 style='text-align: center; color: #4CAF50;'>Powered by Belvilla</h4>", unsafe_allow_html=True)

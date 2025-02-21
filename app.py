@@ -85,9 +85,8 @@ st.markdown("<h1 style='text-align: center; color: #4CAF50;'>Leads Search Portal
 st.markdown("<h3 style='text-align: center;'>Discover Leads Near You Effortlessly! 🔍</h3>", unsafe_allow_html=True)
 st.divider()
 
-# Sidebar Filters
-# Define sources before checking shared view mode
-sources = sorted(data["Source"].dropna().unique())
+# Ensure sources is always defined
+sources = sorted(data["Source"].dropna().unique()) 
 
 if not is_shared_view:
     st.sidebar.header("🔎 Search & Filter Options")
@@ -98,17 +97,16 @@ if not is_shared_view:
         lat = st.sidebar.number_input("Enter Latitude", value=46.94412, format="%f")
         lng = st.sidebar.number_input("Enter Longitude", value=14.70255, format="%f")
         radius = st.sidebar.slider("Search Radius (km)", 1, 50, 10)
-    
+
     elif search_type == "🌍 Location":
         country = st.sidebar.selectbox("🌎 Select Country", sorted(data["Country"].dropna().unique()))
         region_options = ["All"] + sorted(data[data["Country"] == country]["Region"].dropna().unique())
         region = st.sidebar.selectbox("🏙️ Select Region", region_options)
 
-    # Other sidebar filters
+    # Define filters only if not in shared view
     selected_source = st.sidebar.selectbox("Filter by Source", ["All"] + sources)
     hide_nan_email = st.sidebar.checkbox("Hide rows without Email")
     hide_nan_phone = st.sidebar.checkbox("Hide rows without Phone Number")
-
 
 # If shared view, set filters directly
 if is_shared_view:

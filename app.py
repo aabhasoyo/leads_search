@@ -100,6 +100,8 @@ if not is_shared_view:
     
     search_type = st.sidebar.radio("Search by", ["📍 Latitude/Longitude", "🌍 Location"])
 
+    results = pd.DataFrame()
+    
     if search_type == "📍 Latitude/Longitude":
         lat = st.sidebar.number_input("Enter Latitude", value=46.94412, format="%f")
         lng = st.sidebar.number_input("Enter Longitude", value=14.70255, format="%f")

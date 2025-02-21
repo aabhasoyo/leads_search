@@ -86,6 +86,9 @@ st.markdown("<h3 style='text-align: center;'>Discover Leads Near You Effortlessl
 st.divider()
 
 # Sidebar Filters
+# Define sources before checking shared view mode
+sources = sorted(data["Source"].dropna().unique())
+
 if not is_shared_view:
     st.sidebar.header("🔎 Search & Filter Options")
     
@@ -105,6 +108,7 @@ if not is_shared_view:
     selected_source = st.sidebar.selectbox("Filter by Source", ["All"] + sources)
     hide_nan_email = st.sidebar.checkbox("Hide rows without Email")
     hide_nan_phone = st.sidebar.checkbox("Hide rows without Phone Number")
+
 
 # If shared view, set filters directly
 if is_shared_view:

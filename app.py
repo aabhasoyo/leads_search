@@ -86,6 +86,7 @@ st.markdown("<h3 style='text-align: center;'>Discover Leads Near You Effortlessl
 st.divider()
 
 # Ensure sources is always defined
+sources = df["Source"].unique().tolist() if "Source" in df.columns else []
 selected_source = st.sidebar.selectbox("Filter by Source", ["All"] + sources, key="selected_source_filter")
 
 if not is_shared_view:

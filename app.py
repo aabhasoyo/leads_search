@@ -59,6 +59,40 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Title and Description
+st.markdown("""
+    <style>
+        .sidebar-toggle {
+            position: fixed;
+            top: 50%;
+            left: 10px;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 32px;
+            color: #4CAF50;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 10px;
+            border-radius: 50%;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, color 0.3s ease, background 0.3s ease;
+            z-index: 1000;
+        }
+        .sidebar-toggle:hover {
+            transform: translateY(-50%) scale(1.2);
+            color: #388E3C;
+            background: rgba(255, 255, 255, 1);
+        }
+    </style>
+    <script>
+        function toggleSidebar() {
+            var sidebar = window.parent.document.querySelector('[data-testid="stSidebar"]');
+            if (sidebar) {
+                sidebar.style.display = (sidebar.style.display === "none" || sidebar.style.display === "") ? "block" : "none";
+            }
+        }
+    </script>
+    <div class="sidebar-toggle" onclick="toggleSidebar()">❮</div>
+""", unsafe_allow_html=True)
+
 st.markdown("<h1 style='text-align: center; color: #4CAF50;'>Leads Search Portal</h1>", unsafe_allow_html=True)
 st.markdown("<h3 style='text-align: center;'>Discover Leads Near You Effortlessly! 🔍</h3>", unsafe_allow_html=True)
 st.divider()

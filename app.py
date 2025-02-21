@@ -96,8 +96,8 @@ def load_data():
 data = load_data()
 
 # Build KDTree for fast spatial search
-def build_tree(df):
-    coords = df[['Latitude', 'Longitude']].to_numpy()
+def build_tree(data):
+    coords = data[['Latitude', 'Longitude']].to_numpy()
     return cKDTree(coords), coords
 
 tree, coords = build_tree(data)

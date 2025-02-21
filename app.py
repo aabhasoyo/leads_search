@@ -130,8 +130,6 @@ if is_shared_view:
 
 # Additional Filters
 sources = sorted(data["Source"].dropna().unique())
-hide_nan_email = st.sidebar.checkbox("Hide rows without Email")
-hide_nan_phone = st.sidebar.checkbox("Hide rows without Phone Number")
 
 # Sorting
 sort_by = st.sidebar.selectbox("Sort results by", ["Distance (km)", "Rating", "Review Count"])

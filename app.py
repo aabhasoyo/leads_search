@@ -69,6 +69,8 @@ st.markdown("<h1 style='text-align: center; color: #4CAF50;'>Leads Search Portal
 st.markdown("<h3 style='text-align: center;'>Discover Leads Near You Effortlessly! 🔍</h3>", unsafe_allow_html=True)
 st.divider()
 
+results = data.copy()  # Default to full dataset in case filters are not applied
+
 # Button to Show Filters in Pop-up
 if st.button("🔍 Open Filters", use_container_width=True):
     with st.expander("Filter Options", expanded=True):
@@ -80,7 +82,6 @@ if st.button("🔍 Open Filters", use_container_width=True):
             radius = st.slider("Search Radius (km)", 1, 50, 10)
             query_point = np.array([lat, lng])
 
-            # Find nearest points
             distances, indices = tree.query(query_point, k=10, distance_upper_bound=radius / 111)
             indices = indices[distances != np.inf]
             results = data.iloc[indices].copy()

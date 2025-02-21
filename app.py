@@ -31,7 +31,7 @@ if shared_mode:
     # Load data if not already defined
     if "data" not in globals():
         import pandas as pd
-        data = pd.read_csv("properties.csv")  # Update with correct file path
+        data = pd.read_csv("properties.csv", encoding="ISO-8859-1")  # Update with correct file path
 
     # Extract query parameters using the updated method
     query_params = st.query_params.to_dict()

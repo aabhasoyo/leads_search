@@ -86,9 +86,6 @@ st.markdown("<h3 style='text-align: center;'>Discover Leads Near You Effortlessl
 st.divider()
 
 # Ensure sources is always defined
-if not is_shared_view:
-    selected_source = st.sidebar.selectbox("Filter by Source", ["All"] + sources)
-
 sources = sorted(data["Source"].dropna().unique())
 
 if not is_shared_view:

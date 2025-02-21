@@ -5,6 +5,7 @@ from streamlit_folium import folium_static
 from scipy.spatial import cKDTree
 import numpy as np
 import base64
+import urllib.parse
 
 # Set Page Config
 st.set_page_config(page_title="🏡 Discover Leads", layout="wide")
@@ -212,28 +213,45 @@ st.markdown(href, unsafe_allow_html=True)
 
 # Shareable Link
 def generate_share_link():
-
-    search_type = st.session_state.get("search_type", None)
-    if search_type is None:
-        return None  # Prevents the error
-
     base_url = "https://oyoleads.streamlit.app/?"
     params = {}
-  
+
+    # Retrieve values safely from session state
+    search_type = st.session_state.get("search_type", None)
+    lat = st.session_state.get("lat", None)
+    lng = st.session_state.get("lng", None)
+    radius = st.session_state.get("radius", None)
+    country = st.session_state.get("country", None)
+    region = st.session_state.get("region", None)
+
     if search_type == "📍 Latitude/Longitude":
-        params["lat"] = lat
-        params["lng"] = lng
-        params["radius"] = radius
+        if lat and lng and radius:
+            params["lat"] = lat
+            params["lng"] = lng
+            params["radius"] = radius
+        else:
+            return None  # Prevents broken links
+
     elif search_type == "🌍 Location":
-        params["country"] = country
-        if region != "All":
+        if country:
+            params["country"] = country
+        if region and region != "All":
             params["region"] = region
 
-    return base_url + urllib.parse.urlencode(params)
+    if not params:  # No parameters, return None to avoid incorrect links
+        return None
 
+    return base_url + urllib.parse.urlencode(params, doseq=True)
+
+# Generate the link
 share_link = generate_share_link()
-st.text_input("🔗 Shareable Link", share_link)
 
+# Display the link only if it's valid
+if share_link:
+    st.text_input("🔗 Shareable Link", share_link)
+else:
+    st.warning("No valid filters selected to generate a shareable link.")
+    
 # Footer
 st.markdown("<hr>", unsafe_allow_html=True)
 st.markdown("<p style='text-align: center;'>🚀 Developed by Aabhas</p>", unsafe_allow_html=True)

@@ -9,6 +9,12 @@ import base64
 # Set Page Config
 st.set_page_config(page_title="🏡 Discover Leads", layout="wide")
 
+st.markdown("""
+    <style>
+        [data-testid="stSidebar"] { display: none; }
+    </style>
+""", unsafe_allow_html=True)
+
 # Hardcoded login credentials (Replace with a secure method later)
 VALID_CREDENTIALS = {
     "kapilraina": "kapil123",
@@ -63,41 +69,41 @@ st.markdown("<h1 style='text-align: center; color: #4CAF50;'>Leads Search Portal
 st.markdown("<h3 style='text-align: center;'>Discover Leads Near You Effortlessly! 🔍</h3>", unsafe_allow_html=True)
 st.divider()
 
-# Sidebar Filters
-st.sidebar.header("🔎 Search & Filter Options")
+# Button to Show Filters in Pop-up
+if st.button("🔍 Open Filters", use_container_width=True):
+    with st.expander("Filter Options", expanded=True):
+        search_type = st.radio("Search by", ["📍 Latitude/Longitude", "🌍 Location"])
 
-search_type = st.sidebar.radio("Search by", ["📍 Latitude/Longitude", "🌍 Location"])
+        if search_type == "📍 Latitude/Longitude":
+            lat = st.number_input("Enter Latitude", value=46.94412, format="%f")
+            lng = st.number_input("Enter Longitude", value=14.70255, format="%f")
+            radius = st.slider("Search Radius (km)", 1, 50, 10)
+            query_point = np.array([lat, lng])
 
-if search_type == "📍 Latitude/Longitude":
-    lat = st.sidebar.number_input("Enter Latitude", value=46.94412, format="%f")
-    lng = st.sidebar.number_input("Enter Longitude", value=14.70255, format="%f")
-    radius = st.sidebar.slider("Search Radius (km)", 1, 50, 10)
-    query_point = np.array([lat, lng])
+            # Find nearest points
+            distances, indices = tree.query(query_point, k=10, distance_upper_bound=radius / 111)
+            indices = indices[distances != np.inf]
+            results = data.iloc[indices].copy()
+            results["Distance (km)"] = np.round(distances[distances != np.inf] * 111, 2)
+            results.sort_values(by="Distance (km)", inplace=True)
 
-    # Find nearest points
-    distances, indices = tree.query(query_point, k=10, distance_upper_bound=radius / 111)
-    indices = indices[distances != np.inf]
-    results = data.iloc[indices].copy()
-    results["Distance (km)"] = np.round(distances[distances != np.inf] * 111, 2)
-    results.sort_values(by="Distance (km)", inplace=True)
+        elif search_type == "🌍 Location":
+            country = st.selectbox("🌎 Select Country", sorted(data["Country"].dropna().unique()))
+            region_options = ["All"] + sorted(data[data["Country"] == country]["Region"].dropna().unique())
+            region = st.selectbox("🏙️ Select Region", region_options)
 
-elif search_type == "🌍 Location":
-    country = st.sidebar.selectbox("🌎 Select Country", sorted(data["Country"].dropna().unique()))
-    region_options = ["All"] + sorted(data[data["Country"] == country]["Region"].dropna().unique())
-    region = st.sidebar.selectbox("🏙️ Select Region", region_options)
+            results = data[data["Country"] == country].copy() if region == "All" else data[(data["Country"] == country) & (data["Region"] == region)].copy()
 
-    results = data[data["Country"] == country].copy() if region == "All" else data[(data["Country"] == country) & (data["Region"] == region)].copy()
+        # Additional Filters
+        sources = sorted(data["Source"].dropna().unique())
+        selected_source = st.selectbox("Filter by Source", ["All"] + sources)
+        hide_nan_email = st.checkbox("Hide rows without Email")
+        hide_nan_phone = st.checkbox("Hide rows without Phone Number")
 
-# Additional Filters
-sources = sorted(data["Source"].dropna().unique())
-selected_source = st.sidebar.selectbox("Filter by Source", ["All"] + sources)
-hide_nan_email = st.sidebar.checkbox("Hide rows without Email")
-hide_nan_phone = st.sidebar.checkbox("Hide rows without Phone Number")
-
-# Sorting
-sort_by = st.sidebar.selectbox("Sort results by", ["Distance (km)", "Rating", "Review Count"])
-if sort_by in results.columns:
-    results = results.sort_values(by=sort_by, ascending=(sort_by != "Rating"))
+        # Sorting
+        sort_by = st.selectbox("Sort results by", ["Distance (km)", "Rating", "Review Count"])
+        if sort_by in results.columns:
+            results = results.sort_values(by=sort_by, ascending=(sort_by != "Rating"))
 
 # Display Results
 st.markdown(f"<h3>✅ Found {len(results)} Properties</h3>", unsafe_allow_html=True)

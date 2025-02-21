@@ -133,7 +133,11 @@ if not results.empty:
     results["Navigate"] = results.apply(lambda row: f'<a href="https://www.google.com/maps/dir/?api=1&destination={row["Latitude"]},{row["Longitude"]}" target="_blank">🗺️ Open in Maps</a>' if pd.notna(row["Latitude"]) and pd.notna(row["Longitude"]) else "", axis=1)
 
 # Display Table
-styled_table = results[display_cols].to_html(escape=False, index=False)
+# Ensure only existing columns are used to prevent KeyError
+available_columns = [col for col in display_cols if col in results.columns]
+styled_table = results[available_columns].to_html(escape=False, index=False)
+st.markdown(styled_table, unsafe_allow_html=True)
+
 st.markdown(styled_table, unsafe_allow_html=True)
 
 # Export CSV Button

@@ -30,45 +30,47 @@ shared_mode = bool(query_params)  # If URL has params, it's a shared link
 if shared_mode:
     # Extract query parameters
     query_params = st.experimental_get_query_params()
-    lat = float(query_params.get("lat", [0])[0])  # Default 0 to avoid errors
-    lng = float(query_params.get("lng", [0])[0])
-    radius = float(query_params.get("radius", [10])[0])
+    
+    results = pd.DataFrame()  # Ensure results is always defined
 
-    query_point = np.array([lat, lng])
+    if "lat" in query_params and "lng" in query_params:
+        lat = float(query_params.get("lat", [0])[0])  
+        lng = float(query_params.get("lng", [0])[0])
+        radius = float(query_params.get("radius", [10])[0])
 
-    # 🔹 Ensure `tree` is initialized before using it
-    if "tree" not in globals():
-        from scipy.spatial import KDTree
-        coordinates = data[["Latitude", "Longitude"]].dropna().values
-        tree = KDTree(coordinates)
+        query_point = np.array([lat, lng])
 
-    distances, indices = tree.query(query_point, k=10, distance_upper_bound=radius / 111)
-    indices = indices[distances != np.inf]
-    results = data.iloc[indices].copy()
-    results["Distance (km)"] = np.round(distances[distances != np.inf] * 111, 2)
-    results.sort_values(by="Distance (km)", inplace=True)
+        # 🔹 Ensure `tree` is initialized before using it
+        if "tree" not in globals():
+            from scipy.spatial import KDTree
+            coordinates = data[["Latitude", "Longitude"]].dropna().values
+            tree = KDTree(coordinates)
 
-    # If searching by Country/Region
-    elif "country" in query_params:
-        country = query_params["country"]
-        region = query_params.get("region", "All")
+        distances, indices = tree.query(query_point, k=10, distance_upper_bound=radius / 111)
+        indices = indices[distances != np.inf]
+        results = data.iloc[indices].copy()
+        results["Distance (km)"] = np.round(distances[distances != np.inf] * 111, 2)
+        results.sort_values(by="Distance (km)", inplace=True)
+
+    if "country" in query_params:
+        country = query_params["country"][0]
+        region = query_params.get("region", ["All"])[0]
 
         results = data[data["Country"] == country].copy() if region == "All" else data[
             (data["Country"] == country) & (data["Region"] == region)
         ]
-    
+
     # If filters exist for Source, Email, or Phone
     if "source" in query_params:
-        selected_source = query_params["source"]
+        selected_source = query_params["source"][0]
         if selected_source != "All":
             results = results[results["Source"] == selected_source]
 
-    if "hide_nan_email" in query_params and query_params["hide_nan_email"] == "true":
+    if "hide_nan_email" in query_params and query_params["hide_nan_email"][0] == "true":
         results = results[results["Email"].notna()]
 
-    if "hide_nan_phone" in query_params and query_params["hide_nan_phone"] == "true":
+    if "hide_nan_phone" in query_params and query_params["hide_nan_phone"][0] == "true":
         results = results[results["Phone Number"].notna()]
-
 
 if not shared_mode and not st.session_state.authenticated:
     st.markdown("<h2 style='text-align: center;'>🔑 Login to Access Leads</h2>", unsafe_allow_html=True)

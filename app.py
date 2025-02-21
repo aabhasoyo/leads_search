@@ -146,9 +146,9 @@ if not shared_mode:
 
 # Display Results
 if shared_mode:
-    st.markdown("<h2>📌 Shared Leads</h2>", unsafe_allow_html=True)
+    st.markdown("<h2>📌 Shared {len(results)} Leads</h2>", unsafe_allow_html=True)
 else:
-    st.markdown("<h2>✅ Found Properties</h2>", unsafe_allow_html=True)
+    st.markdown("<h2>✅ Found {len(results)} Properties</h2>", unsafe_allow_html=True)
 
 # Define Display Columns
 display_cols = ["Source", "Name", "Address", "Navigate", "Rating", "Review Count", "Website", "Phone Number", "Email"]

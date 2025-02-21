@@ -21,7 +21,51 @@ if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
 
 # Authentication form
-if not st.session_state.authenticated:
+import streamlit as st
+import urllib.parse
+
+query_params = st.query_params
+shared_mode = bool(query_params)  # If URL has params, it's a shared link
+
+if shared_mode:
+    query_params = st.query_params
+
+    # If searching by Lat/Lng
+    if "lat" in query_params and "lng" in query_params:
+        lat = float(query_params["lat"])
+        lng = float(query_params["lng"])
+        radius = float(query_params.get("radius", 10))  # Default radius = 10km
+
+        query_point = np.array([lat, lng])
+        distances, indices = tree.query(query_point, k=10, distance_upper_bound=radius / 111)
+        indices = indices[distances != np.inf]
+        results = data.iloc[indices].copy()
+        results["Distance (km)"] = np.round(distances[distances != np.inf] * 111, 2)
+        results.sort_values(by="Distance (km)", inplace=True)
+
+    # If searching by Country/Region
+    elif "country" in query_params:
+        country = query_params["country"]
+        region = query_params.get("region", "All")
+
+        results = data[data["Country"] == country].copy() if region == "All" else data[
+            (data["Country"] == country) & (data["Region"] == region)
+        ]
+    
+    # If filters exist for Source, Email, or Phone
+    if "source" in query_params:
+        selected_source = query_params["source"]
+        if selected_source != "All":
+            results = results[results["Source"] == selected_source]
+
+    if "hide_nan_email" in query_params and query_params["hide_nan_email"] == "true":
+        results = results[results["Email"].notna()]
+
+    if "hide_nan_phone" in query_params and query_params["hide_nan_phone"] == "true":
+        results = results[results["Phone Number"].notna()]
+
+
+if not shared_mode and not st.session_state.authenticated:
     st.markdown("<h2 style='text-align: center;'>🔑 Login to Access Leads</h2>", unsafe_allow_html=True)
 
     username = st.text_input("Username", placeholder="Enter username")
@@ -64,43 +108,47 @@ st.markdown("<h3 style='text-align: center;'>Discover Leads Near You Effortlessl
 st.divider()
 
 # Sidebar Filters
-st.sidebar.header("🔎 Search & Filter Options")
-
-search_type = st.sidebar.radio("Search by", ["📍 Latitude/Longitude", "🌍 Location"])
-
-if search_type == "📍 Latitude/Longitude":
-    lat = st.sidebar.number_input("Enter Latitude", value=46.94412, format="%f")
-    lng = st.sidebar.number_input("Enter Longitude", value=14.70255, format="%f")
-    radius = st.sidebar.slider("Search Radius (km)", 1, 50, 10)
-    query_point = np.array([lat, lng])
-
-    # Find nearest points
-    distances, indices = tree.query(query_point, k=10, distance_upper_bound=radius / 111)
-    indices = indices[distances != np.inf]
-    results = data.iloc[indices].copy()
-    results["Distance (km)"] = np.round(distances[distances != np.inf] * 111, 2)
-    results.sort_values(by="Distance (km)", inplace=True)
-
-elif search_type == "🌍 Location":
-    country = st.sidebar.selectbox("🌎 Select Country", sorted(data["Country"].dropna().unique()))
-    region_options = ["All"] + sorted(data[data["Country"] == country]["Region"].dropna().unique())
-    region = st.sidebar.selectbox("🏙️ Select Region", region_options)
-
-    results = data[data["Country"] == country].copy() if region == "All" else data[(data["Country"] == country) & (data["Region"] == region)].copy()
-
-# Additional Filters
-sources = sorted(data["Source"].dropna().unique())
-selected_source = st.sidebar.selectbox("Filter by Source", ["All"] + sources)
-hide_nan_email = st.sidebar.checkbox("Hide rows without Email")
-hide_nan_phone = st.sidebar.checkbox("Hide rows without Phone Number")
-
-# Sorting
-sort_by = st.sidebar.selectbox("Sort results by", ["Distance (km)", "Rating", "Review Count"])
-if sort_by in results.columns:
-    results = results.sort_values(by=sort_by, ascending=(sort_by != "Rating"))
+if not shared_mode:
+    st.sidebar.header("🔎 Search & Filter Options")
+    
+    search_type = st.sidebar.radio("Search by", ["📍 Latitude/Longitude", "🌍 Location"])
+    
+    if search_type == "📍 Latitude/Longitude":
+        lat = st.sidebar.number_input("Enter Latitude", value=46.94412, format="%f")
+        lng = st.sidebar.number_input("Enter Longitude", value=14.70255, format="%f")
+        radius = st.sidebar.slider("Search Radius (km)", 1, 50, 10)
+        query_point = np.array([lat, lng])
+    
+        # Find nearest points
+        distances, indices = tree.query(query_point, k=10, distance_upper_bound=radius / 111)
+        indices = indices[distances != np.inf]
+        results = data.iloc[indices].copy()
+        results["Distance (km)"] = np.round(distances[distances != np.inf] * 111, 2)
+        results.sort_values(by="Distance (km)", inplace=True)
+    
+    elif search_type == "🌍 Location":
+        country = st.sidebar.selectbox("🌎 Select Country", sorted(data["Country"].dropna().unique()))
+        region_options = ["All"] + sorted(data[data["Country"] == country]["Region"].dropna().unique())
+        region = st.sidebar.selectbox("🏙️ Select Region", region_options)
+    
+        results = data[data["Country"] == country].copy() if region == "All" else data[(data["Country"] == country) & (data["Region"] == region)].copy()
+    
+    # Additional Filters
+    sources = sorted(data["Source"].dropna().unique())
+    selected_source = st.sidebar.selectbox("Filter by Source", ["All"] + sources)
+    hide_nan_email = st.sidebar.checkbox("Hide rows without Email")
+    hide_nan_phone = st.sidebar.checkbox("Hide rows without Phone Number")
+    
+    # Sorting
+    sort_by = st.sidebar.selectbox("Sort results by", ["Distance (km)", "Rating", "Review Count"])
+    if sort_by in results.columns:
+        results = results.sort_values(by=sort_by, ascending=(sort_by != "Rating"))
 
 # Display Results
-st.markdown(f"<h3>✅ Found {len(results)} Properties</h3>", unsafe_allow_html=True)
+if shared_mode:
+    st.markdown("<h2>📌 Shared Leads</h2>", unsafe_allow_html=True)
+else:
+    st.markdown("<h2>✅ Found Properties</h2>", unsafe_allow_html=True)
 
 # Define Display Columns
 display_cols = ["Source", "Name", "Address", "Navigate", "Rating", "Review Count", "Website", "Phone Number", "Email"]
@@ -152,9 +200,19 @@ st.markdown(href, unsafe_allow_html=True)
 
 # Shareable Link
 def generate_share_link():
-    base_url = "https://leads-app.streamlit.app?"
-    query_params = f"lat={lat}&lng={lng}&radius={radius}" if search_type == "📍 Latitude/Longitude" else f"country={country}&region={region}"
-    return f"{base_url}{query_params}"
+    base_url = "https://leads-app.streamlit.app/?"
+    params = {}
+
+    if search_type == "📍 Latitude/Longitude":
+        params["lat"] = lat
+        params["lng"] = lng
+        params["radius"] = radius
+    elif search_type == "🌍 Location":
+        params["country"] = country
+        if region != "All":
+            params["region"] = region
+
+    return base_url + urllib.parse.urlencode(params)
 
 share_link = generate_share_link()
 st.text_input("🔗 Shareable Link", share_link)

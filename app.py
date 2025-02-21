@@ -114,8 +114,6 @@ if "results" in locals():
     if sort_by in results.columns:
         results = results.sort_values(by=sort_by, ascending=(sort_by != "Rating"))
 
-if "Number of Reviews" in results.columns:
-    results.rename(columns={"Number of Reviews": "Review Count"}, inplace=True)
 
 # Display Results
 st.markdown(f"<h3>✅ Found {len(results)} Properties</h3>", unsafe_allow_html=True)

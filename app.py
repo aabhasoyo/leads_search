@@ -215,6 +215,10 @@ def generate_share_link():
     base_url = "https://oyoleads.streamlit.app/?"
     params = {}
 
+    search_type = st.session_state.get("search_type", None)
+    if search_type is None:
+        return None  # Prevents the error
+
     if search_type == "📍 Latitude/Longitude":
         params["lat"] = lat
         params["lng"] = lng

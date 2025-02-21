@@ -130,7 +130,6 @@ if is_shared_view:
 
 # Additional Filters
 sources = sorted(data["Source"].dropna().unique())
-selected_source = st.sidebar.selectbox("Filter by Source", ["All"] + sources)
 hide_nan_email = st.sidebar.checkbox("Hide rows without Email")
 hide_nan_phone = st.sidebar.checkbox("Hide rows without Phone Number")
 

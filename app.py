@@ -67,8 +67,8 @@ def load_data():
 data = load_data()
 
 # Build KDTree for fast spatial search
-def build_tree(df):
-    coords = df[['Latitude', 'Longitude']].to_numpy()
+def build_tree(data):
+    coords = data[['Latitude', 'Longitude']].to_numpy()
     return cKDTree(coords), coords
 
 tree, coords = build_tree(data)
@@ -85,14 +85,14 @@ st.markdown("<h1 style='text-align: center; color: #4CAF50;'>Leads Search Portal
 st.markdown("<h3 style='text-align: center;'>Discover Leads Near You Effortlessly! 🔍</h3>", unsafe_allow_html=True)
 st.divider()
 
-# Check if df is properly loaded
-print(df.head())  
+# Check if data is properly loaded
+print(data.head())  
 
 # Define sources safely
-sources = df["Source"].unique().tolist() if "Source" in df.columns else []
+sources = data["Source"].unique().tolist() if "Source" in data.columns else []
 
 # Ensure sources is always defined
-sources = df["Source"].unique().tolist() if "Source" in df.columns else []
+sources = data["Source"].unique().tolist() if "Source" in data.columns else []
 selected_source = st.sidebar.selectbox("Filter by Source", ["All"] + sources, key="selected_source_filter")
 
 if not is_shared_view:

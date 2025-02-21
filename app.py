@@ -13,6 +13,17 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
+# Force Header to Always Be Visible on Mobile
+st.markdown("""
+    <style>
+        [data-testid="stToolbar"] {
+            visibility: visible !important;
+            opacity: 1 !important;
+            display: block !important;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
 import pandas as pd
 import folium
 from streamlit_folium import folium_static

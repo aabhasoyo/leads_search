@@ -131,7 +131,9 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Display Table
-styled_table = results[display_cols].to_html(escape=False, index=False)
+# Ensure only existing columns are used
+available_cols = [col for col in display_cols if col in results.columns]
+styled_table = results[available_cols].to_html(escape=False, index=False)
 st.markdown(styled_table, unsafe_allow_html=True)
 
 # Export CSV Button

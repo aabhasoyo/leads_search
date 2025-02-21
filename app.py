@@ -85,6 +85,12 @@ st.markdown("<h1 style='text-align: center; color: #4CAF50;'>Leads Search Portal
 st.markdown("<h3 style='text-align: center;'>Discover Leads Near You Effortlessly! 🔍</h3>", unsafe_allow_html=True)
 st.divider()
 
+# Check if df is properly loaded
+print(df.head())  
+
+# Define sources safely
+sources = df["Source"].unique().tolist() if "Source" in df.columns else []
+
 # Ensure sources is always defined
 sources = df["Source"].unique().tolist() if "Source" in df.columns else []
 selected_source = st.sidebar.selectbox("Filter by Source", ["All"] + sources, key="selected_source_filter")

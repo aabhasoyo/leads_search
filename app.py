@@ -28,8 +28,8 @@ query_params = st.query_params
 shared_mode = bool(query_params)  # If URL has params, it's a shared link
 
 if shared_mode:
-    # Extract query parameters
-    query_params = st.experimental_get_query_params()
+    # Extract query parameters using the updated method
+    query_params = st.query_params.to_dict()
     
     results = pd.DataFrame()  # Ensure results is always defined
 
@@ -66,11 +66,7 @@ if shared_mode:
         if selected_source != "All":
             results = results[results["Source"] == selected_source]
 
-    if "hide_nan_email" in query_params and query_params["hide_nan_email"][0] == "true":
-        results = results[results["Email"].notna()]
-
-    if "hide_nan_phone" in query_params and query_params["hide_nan_phone"][0] == "true":
-        results = results[results["Phone Number"].notna()]
+    if "hide_nan_email" in query_params and query_params["hide_nan_email"][
 
 if not shared_mode and not st.session_state.authenticated:
     st.markdown("<h2 style='text-align: center;'>🔑 Login to Access Leads</h2>", unsafe_allow_html=True)

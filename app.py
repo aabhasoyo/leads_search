@@ -3,6 +3,16 @@ import streamlit as st
 # Set Page Config (Must be the first Streamlit command)
 st.set_page_config(page_title="🏡 Discover Leads", layout="wide")
 
+# Force Light Mode
+st.markdown("""
+    <style>
+        html, body, [data-testid="stAppViewContainer"], [data-testid="stHeader"] {
+            background-color: white !important;
+            color: black !important;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
 import pandas as pd
 import folium
 from streamlit_folium import folium_static

@@ -120,14 +120,15 @@ results["Navigate"] = results.apply(lambda row: f'<a href="https://www.google.co
 
 # Display Data in a Responsive Table
 st.markdown("""
-    <style>
-        table { width: 100%; border-collapse: collapse; border-radius: 8px; overflow: hidden; font-family: Arial, sans-serif; font-size: 14px; }
-        th { background-color: #4CAF50; color: white; padding: 12px; text-align: center; }
-        td { padding: 10px; border-bottom: 1px solid #ddd; text-align: center; }
+       <style>
+        table { width: 100%; border-collapse: collapse; border-radius: 8px; overflow: hidden; font-family: Arial, sans-serif; font-size: 14px; text-align: center !important; }
+        th { background-color: #4CAF50; color: white; padding: 12px; text-align: center !important; vertical-align: middle !important; }
+        td { padding: 10px; border-bottom: 1px solid #ddd; text-align: center !important; vertical-align: middle !important; }
         tr:hover { background-color: #f5f5f5; }
         a { color: #1E88E5; text-decoration: none; font-weight: bold; }
         a:hover { text-decoration: underline; }
     </style>
+
 """, unsafe_allow_html=True)
 
 # Display Table

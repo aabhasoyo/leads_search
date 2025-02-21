@@ -66,7 +66,11 @@ if shared_mode:
         if selected_source != "All":
             results = results[results["Source"] == selected_source]
 
-    if "hide_nan_email" in query_params and query_params["hide_nan_email"][
+    if "hide_nan_email" in query_params and query_params["hide_nan_email"][0] == "true":
+        results = results[results["Email"].notna()]
+
+    if "hide_nan_phone" in query_params and query_params["hide_nan_phone"][0] == "true":
+        results = results[results["Phone Number"].notna()]
 
 if not shared_mode and not st.session_state.authenticated:
     st.markdown("<h2 style='text-align: center;'>🔑 Login to Access Leads</h2>", unsafe_allow_html=True)

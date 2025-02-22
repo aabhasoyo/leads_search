@@ -42,12 +42,13 @@ if not shared_mode and not st.session_state.authenticated:
 # Set Page Config after authentication
 st.set_page_config(page_title="🏡 Discover Leads", layout="wide")
 
-# Hardcoded login credentials (Replace with a secure method later)
 VALID_CREDENTIALS = {
     "kapilraina": "kapil123",
     "aabhas": "aabhas123",
     "admin": "password123"
 }
+
+# Hardcoded login credentials (Replace with a secure method later)
 
 # Initialize session state for authentication
 if not st.session_state.authenticated:

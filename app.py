@@ -7,6 +7,13 @@ import numpy as np
 import base64
 import urllib.parse
 
+if "authenticated" not in st.session_state:
+    st.session_state.authenticated = False  # Set default if missing
+
+if not st.session_state.authenticated:
+    st.warning("Please authenticate to view leads.")
+    st.stop()
+
 # Set Page Config
 st.set_page_config(page_title="🏡 Discover Leads", layout="wide")
 

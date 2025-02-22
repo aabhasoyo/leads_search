@@ -18,8 +18,15 @@ VALID_CREDENTIALS = {
 }
 
 # Initialize session state for authentication
-if "authenticated" not in st.session_state:
-    st.session_state.authenticated = False
+if not st.session_state.authenticated:
+    # Check if the user came from a shareable link
+    query_params = st.query_params.to_dict()
+    if "shared" in query_params:  # Example: ?shared=true in URL
+        st.session_state.authenticated = True  # Allow access from a shared link
+
+if not st.session_state.authenticated:
+    st.warning("Please authenticate to view leads.")
+    st.stop()
 
 # Authentication form
 import streamlit as st
@@ -261,7 +268,9 @@ else:
     st.warning("No valid filters selected to generate a shareable link.")
 
 # Generate the link
-share_link = generate_share_link()
+share_link = f"{st.get_url()}?shared=true"
+st.text_input("🔗 Your Shareable Link", share_link, key="shareable_link")
+
 st.write("Debug:", st.session_state)
     
 # Footer

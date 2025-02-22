@@ -263,13 +263,10 @@ def generate_share_link():
 share_link = generate_share_link()
 
 if share_link:
-   st.text_input("🔗 Your Shareable Link", share_link, key="shareable_link")
+    share_link = f"{st.get_url()}?shared=true"
+    st.text_input("🔗 Your Shareable Link", share_link, key="shareable_link")
 else:
     st.warning("No valid filters selected to generate a shareable link.")
-
-# Generate the link
-share_link = f"{st.get_url()}?shared=true"
-st.text_input("🔗 Your Shareable Link", share_link, key="shareable_link")
 
 st.write("Debug:", st.session_state)
     

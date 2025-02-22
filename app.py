@@ -277,7 +277,7 @@ b64 = base64.b64encode(csv_data).decode()
 href = f'<a href="data:file/csv;base64,{b64}" download="filtered_results.csv">📥 Download CSV</a>'
 st.markdown(href, unsafe_allow_html=True)
 
-# Shareable Link
+# Shareable Link Generation Function
 def generate_share_link():
     base_url = "https://oyoleads.streamlit.app/?"  # Your actual app URL
     params = {}
@@ -309,23 +309,27 @@ def generate_share_link():
 
     return base_url + urllib.parse.urlencode(params, doseq=True)
 
+# Generate Shareable Link
 share_link = generate_share_link()
-copy_button = """
-    <button onclick="navigator.clipboard.writeText('{}')" 
-    style="background: none; border: none; cursor: pointer;">
-        📋
-    </button>
-""".format(share_link)
-
-# Show the button using st.markdown
-st.markdown(copy_button, unsafe_allow_html=True)
 
 if share_link:
-    share_link = f"{share_link}&shared=true"  # ✅ Corrected this line
-    st.text_input("🔗 Your Shareable Link", share_link, key="shareable_link")
+    share_link = f"{share_link}&shared=true"  # ✅ Ensuring shared=true is appended
+
+    # Display the shareable link inside a text input (readonly)
+    link_input = st.text_input("🔗 Your Shareable Link", share_link, key="shareable_link")
+
+    # Add a copy-to-clipboard button using JavaScript
+    st.markdown(
+        f"""
+        <button onclick="navigator.clipboard.writeText('{share_link}')" 
+        style="padding: 5px 10px; font-size: 14px; background-color: #4CAF50; color: white; border: none; cursor: pointer; border-radius: 5px; margin-top: 5px;">
+            📋 Copy Link
+        </button>
+        """,
+        unsafe_allow_html=True
+    )
 else:
     st.warning("No valid filters selected to generate a shareable link.")
-    
 
 # st.write("Debug:", st.session_state)  # Debugging info
 

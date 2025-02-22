@@ -310,12 +310,22 @@ def generate_share_link():
     return base_url + urllib.parse.urlencode(params, doseq=True)
 
 share_link = generate_share_link()
+copy_button = """
+    <button onclick="navigator.clipboard.writeText('{}')" 
+    style="background: none; border: none; cursor: pointer;">
+        📋
+    </button>
+""".format(shareable_link)
+
+# Show the button using st.markdown
+st.markdown(copy_button, unsafe_allow_html=True)
 
 if share_link:
     share_link = f"{share_link}&shared=true"  # ✅ Corrected this line
     st.text_input("🔗 Your Shareable Link", share_link, key="shareable_link")
 else:
     st.warning("No valid filters selected to generate a shareable link.")
+    
 
 # st.write("Debug:", st.session_state)  # Debugging info
 

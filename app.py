@@ -316,35 +316,26 @@ if share_link:
     share_link = f"{share_link}&shared=true"  # ✅ Ensuring shared=true is appended
 
     # Display the shareable link inside a text input (readonly)
-    link_input = st.text_input("🔗 Your Shareable Link", share_link, key="shareable_link")
+    st.text_input("🔗 Your Shareable Link", share_link, key="shareable_link")
 
-    # Render Copy Button Only if a Valid Link Exists
-    copy_button_html = f"""
-        <style>
-        .copy-btn {{
-            background-color: #008CBA; 
-            color: white; 
-            border: none; 
-            padding: 8px 15px; 
-            border-radius: 5px; 
-            cursor: pointer; 
-            font-size: 14px;
-        }}
-        </style>
-        <textarea id="copyText" style="position: absolute; left: -9999px;">{share_link}</textarea>
-        <button class="copy-btn" onclick="copyFunction()">📋 Copy Link</button>
-
-        <script>
-        function copyFunction() {{
-            var copyText = document.getElementById("copyText");
-            copyText.select();
-            document.execCommand("copy");
-            alert("✅ Link copied to clipboard!");
-        }}
-        </script>
+    # JavaScript Code for Clipboard Copying
+    copy_script = f"""
+    <script>
+    function copyToClipboard() {{
+        navigator.clipboard.writeText("{share_link}");
+        var copyButton = document.getElementById("copy-button");
+        copyButton.innerText = "✅ Copied!";
+        setTimeout(() => {{ copyButton.innerText = "📋 Copy Link"; }}, 2000);
+    }}
+    </script>
+    <button id="copy-button" onclick="copyToClipboard()" 
+    style="background-color:#008CBA; color:white; padding:8px 12px; border:none; border-radius:5px; cursor:pointer;">
+        📋 Copy Link
+    </button>
     """
 
-    st.markdown(copy_button_html, unsafe_allow_html=True)
+    # Render Copy Button using HTML
+    st.markdown(copy_script, unsafe_allow_html=True)
 
 else:
     st.warning("No valid filters selected to generate a shareable link.")

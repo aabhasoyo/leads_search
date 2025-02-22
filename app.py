@@ -7,19 +7,39 @@ import numpy as np
 import base64
 import urllib.parse
 
+import streamlit as st
+
+# Ensure authentication state exists
 if "authenticated" not in st.session_state:
-    st.session_state.authenticated = True  # Set default if missing
+    st.session_state.authenticated = False  # Default to False
 
 # Check if the user came from a shareable link
 query_params = st.query_params.to_dict()
-if "shared" in query_params:  # Example: ?shared=true in URL
-    st.session_state.authenticated = True  # Allow access from a shared link
+shared_mode = "shared" in query_params  # Example: ?shared=true in URL
 
-if not st.session_state.authenticated:
-    st.warning("Please authenticate to view leads.")
-    st.stop()
+if shared_mode:
+    st.session_state.authenticated = True  # Automatically authenticate shared link users
 
-# Set Page Config
+# If not shared mode and not authenticated, show login form
+if not shared_mode and not st.session_state.authenticated:
+    st.set_page_config(page_title="🏡 Discover Leads", layout="wide")
+    
+    st.markdown("<h2 style='text-align: center;'>🔑 Login to Access Leads</h2>", unsafe_allow_html=True)
+
+    username = st.text_input("Username", placeholder="Enter username")
+    password = st.text_input("Password", type="password", placeholder="Enter password")
+
+    if st.button("Login"):
+        if username in VALID_CREDENTIALS and password == VALID_CREDENTIALS[username]:
+            st.session_state.authenticated = True
+            st.session_state.username = username
+            st.rerun()
+        else:
+            st.error("Invalid username or password")
+
+    st.stop()  # Prevent further execution for unauthenticated users
+
+# Set Page Config after authentication
 st.set_page_config(page_title="🏡 Discover Leads", layout="wide")
 
 # Hardcoded login credentials (Replace with a secure method later)

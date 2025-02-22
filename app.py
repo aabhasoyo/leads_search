@@ -256,5 +256,5 @@ else:
 st.markdown("""
     <hr>
     <p style='text-align: center; font-size: 14px; margin-bottom: 2px;'>🚀 Powered by Belvilla</p>
-    <p style='text-align: center; font-size: 12px; color: gray; margin-top: 0px;'>--- Developed by Aabhas</p>
+    <p style='text-align: center; font-size: 12px; color: gray; margin-top: 0px;'>---> Developed by Aabhas</p>
 """, unsafe_allow_html=True)

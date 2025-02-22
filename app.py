@@ -29,6 +29,12 @@ if not shared_mode and not st.session_state.authenticated:
     username = st.text_input("Username", placeholder="Enter username")
     password = st.text_input("Password", type="password", placeholder="Enter password")
 
+    VALID_CREDENTIALS = {
+    "kapilraina": "kapil123",
+    "aabhas": "aabhas123",
+    "admin": "password123"
+    }
+
     if st.button("Login"):
         if username in VALID_CREDENTIALS and password == VALID_CREDENTIALS[username]:
             st.session_state.authenticated = True
@@ -41,14 +47,6 @@ if not shared_mode and not st.session_state.authenticated:
 
 # Set Page Config after authentication
 st.set_page_config(page_title="🏡 Discover Leads", layout="wide")
-
-VALID_CREDENTIALS = {
-    "kapilraina": "kapil123",
-    "aabhas": "aabhas123",
-    "admin": "password123"
-}
-
-# Hardcoded login credentials (Replace with a secure method later)
 
 # Initialize session state for authentication
 if not st.session_state.authenticated:

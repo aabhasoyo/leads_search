@@ -18,7 +18,25 @@ query_params = st.query_params.to_dict()
 shared_mode = "shared" in query_params  # Example: ?shared=true in URL
 
 if shared_mode:
-    st.session_state.authenticated = True  # Automatically authenticate shared link users
+    st.session_state.authenticated = True  # Allow access from a shared link
+
+    # Populate session state with URL parameters
+    if "lat" in query_params:
+        st.session_state["lat"] = float(query_params["lat"])
+    if "lng" in query_params:
+        st.session_state["lng"] = float(query_params["lng"])
+    if "radius" in query_params:
+        st.session_state["radius"] = int(query_params["radius"])
+    if "country" in query_params:
+        st.session_state["country"] = query_params["country"]
+    if "region" in query_params:
+        st.session_state["region"] = query_params["region"]
+
+    # Set search type based on which parameters exist
+    if "lat" in query_params and "lng" in query_params:
+        st.session_state["search_type"] = "📍 Latitude/Longitude"
+    elif "country" in query_params:
+        st.session_state["search_type"] = "🌍 Location"s
 
 # If not shared mode and not authenticated, show login form
 if not shared_mode and not st.session_state.authenticated:

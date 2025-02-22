@@ -261,12 +261,12 @@ st.markdown(href, unsafe_allow_html=True)
 
 # Shareable Link
 def generate_share_link():
-    base_url = "https://oyoleads.streamlit.app/?"
+    base_url = "https://oyoleads.streamlit.app/?"  # Your actual app URL
     params = {}
 
     # Retrieve values from session state
     search_type = st.session_state.get("search_type")
-    
+
     if search_type == "📍 Latitude/Longitude":
         lat = st.session_state.get("lat")
         lng = st.session_state.get("lng")
@@ -294,12 +294,13 @@ def generate_share_link():
 share_link = generate_share_link()
 
 if share_link:
-    share_link = f"{st.get_url()}?shared=true"
+    share_link = f"{share_link}&shared=true"  # ✅ Corrected this line
     st.text_input("🔗 Your Shareable Link", share_link, key="shareable_link")
 else:
     st.warning("No valid filters selected to generate a shareable link.")
 
-st.write("Debug:", st.session_state)
+st.write("Debug:", st.session_state)  # Debugging info
+
     
 # Footer
 st.markdown("""

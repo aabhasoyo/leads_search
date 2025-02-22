@@ -120,32 +120,42 @@ st.markdown("<h1 style='text-align: center; color: #4CAF50;'>Leads Search Portal
 st.markdown("<h3 style='text-align: center;'>Discover Leads Near You Effortlessly! 🔍</h3>", unsafe_allow_html=True)
 st.divider()
 
-# Sidebar Filters
 if not shared_mode:
     st.sidebar.header("🔎 Search & Filter Options")
-    
+
     search_type = st.sidebar.radio("Search by", ["📍 Latitude/Longitude", "🌍 Location"])
-    
+    st.session_state["search_type"] = search_type  # Store search type
+
     if search_type == "📍 Latitude/Longitude":
         lat = st.sidebar.number_input("Enter Latitude", value=46.94412, format="%f")
         lng = st.sidebar.number_input("Enter Longitude", value=14.70255, format="%f")
         radius = st.sidebar.slider("Search Radius (km)", 1, 50, 10)
+
+        # Store in session state
+        st.session_state["lat"] = lat
+        st.session_state["lng"] = lng
+        st.session_state["radius"] = radius
+
         query_point = np.array([lat, lng])
-    
-        # Find nearest points
         distances, indices = tree.query(query_point, k=10, distance_upper_bound=radius / 111)
         indices = indices[distances != np.inf]
         results = data.iloc[indices].copy()
         results["Distance (km)"] = np.round(distances[distances != np.inf] * 111, 2)
         results.sort_values(by="Distance (km)", inplace=True)
-    
+
     elif search_type == "🌍 Location":
         country = st.sidebar.selectbox("🌎 Select Country", sorted(data["Country"].dropna().unique()))
         region_options = ["All"] + sorted(data[data["Country"] == country]["Region"].dropna().unique())
         region = st.sidebar.selectbox("🏙️ Select Region", region_options)
-    
-        results = data[data["Country"] == country].copy() if region == "All" else data[(data["Country"] == country) & (data["Region"] == region)].copy()
-    
+
+        # Store in session state
+        st.session_state["country"] = country
+        st.session_state["region"] = region
+
+        results = data[data["Country"] == country].copy() if region == "All" else data[
+            (data["Country"] == country) & (data["Region"] == region)
+        ]
+        
     # Additional Filters
     sources = sorted(data["Source"].dropna().unique())
     selected_source = st.sidebar.selectbox("Filter by Source", ["All"] + sources)
@@ -216,32 +226,39 @@ def generate_share_link():
     base_url = "https://oyoleads.streamlit.app/?"
     params = {}
 
-    # Retrieve values safely from session state
-    search_type = st.session_state.get("search_type", None)
-    lat = st.session_state.get("lat", None)
-    lng = st.session_state.get("lng", None)
-    radius = st.session_state.get("radius", None)
-    country = st.session_state.get("country", None)
-    region = st.session_state.get("region", None)
-
+    # Retrieve values from session state
+    search_type = st.session_state.get("search_type")
+    
     if search_type == "📍 Latitude/Longitude":
-        if lat and lng and radius:
+        lat = st.session_state.get("lat")
+        lng = st.session_state.get("lng")
+        radius = st.session_state.get("radius")
+
+        if lat is not None and lng is not None and radius is not None:
             params["lat"] = lat
             params["lng"] = lng
             params["radius"] = radius
-        else:
-            return None  # Prevents broken links
 
     elif search_type == "🌍 Location":
+        country = st.session_state.get("country")
+        region = st.session_state.get("region")
+
         if country:
             params["country"] = country
         if region and region != "All":
             params["region"] = region
 
-    if not params:  # No parameters, return None to avoid incorrect links
-        return None
+    if not params:
+        return None  # No valid filters, prevent broken links
 
     return base_url + urllib.parse.urlencode(params, doseq=True)
+
+share_link = generate_share_link()
+
+if share_link:
+    st.text_input("🔗 Shareable Link", share_link)
+else:
+    st.warning("No valid filters selected to generate a shareable link.")
 
 # Generate the link
 share_link = generate_share_link()

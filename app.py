@@ -256,6 +256,6 @@ else:
 st.markdown("""
     <hr>
     <p style='text-align: center; font-size: 14px; margin-bottom: 2px;'>🚀 Powered by <strong>Belvilla</strong></p>
-    <p style='text-align: center; font-size: 11px; color: gray; margin-top: -5px; opacity: 0.5;'>&nbsp;&nbsp;&nbsp;⚡Developed by Aabhas</p>
+    <p style='text-align: center; font-size: 11px; color: gray; margin-top: -5px; opacity: 0.5;'>&nbsp;&nbsp;⚡Developed by Aabhas</p>
 """, unsafe_allow_html=True)
 

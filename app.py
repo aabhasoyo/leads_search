@@ -277,7 +277,7 @@ b64 = base64.b64encode(csv_data).decode()
 href = f'<a href="data:file/csv;base64,{b64}" download="filtered_results.csv">📥 Download CSV</a>'
 st.markdown(href, unsafe_allow_html=True)
 
-# Shareable Link Generation Function
+# Function to generate shareable link
 def generate_share_link():
     base_url = "https://oyoleads.streamlit.app/?"  # Your actual app URL
     params = {}
@@ -290,7 +290,7 @@ def generate_share_link():
         lng = st.session_state.get("lng")
         radius = st.session_state.get("radius")
 
-        if lat is not None and lng is not None and radius is not None:
+        if lat and lng and radius:
             params["lat"] = lat
             params["lng"] = lng
             params["radius"] = radius
@@ -309,36 +309,19 @@ def generate_share_link():
 
     return base_url + urllib.parse.urlencode(params, doseq=True)
 
-# Generate Shareable Link
+# Generate shareable link
 share_link = generate_share_link()
 
 if share_link:
-    share_link = f"{share_link}&shared=true"  # ✅ Ensuring shared=true is appended
-
-    # Display the shareable link inside a text input (readonly)
-    st.text_input("🔗 Your Shareable Link", share_link, key="shareable_link")
-
-    # JavaScript Code for Clipboard Copying
-    copy_script = f"""
-    <script>
-    function copyToClipboard() {{
-        navigator.clipboard.writeText("{share_link}");
-        var copyButton = document.getElementById("copy-button");
-        copyButton.innerText = "✅ Copied!";
-        setTimeout(() => {{ copyButton.innerText = "📋 Copy Link"; }}, 2000);
-    }}
-    </script>
-    <button id="copy-button" onclick="copyToClipboard()" 
-    style="background-color:#008CBA; color:white; padding:8px 12px; border:none; border-radius:5px; cursor:pointer;">
-        📋 Copy Link
-    </button>
-    """
-
-    # Render Copy Button using HTML
-    st.markdown(copy_script, unsafe_allow_html=True)
+    share_link = f"{share_link}&shared=true"  # ✅ Ensuring correct link format
+    
+    # Display link in a user-friendly way
+    st.markdown("### 🔗 Your Shareable Link")
+    st.code(share_link, language="markdown")  # ✅ Better visual format
+    st.text_input("📋 Click & Copy", share_link, key="shareable_link", use_container_width=True)
 
 else:
-    st.warning("No valid filters selected to generate a shareable link.")
+    st.warning("⚠️ No valid filters selected to generate a shareable link.")
     
 # st.write("Debug:", st.session_state)  # Debugging info
 

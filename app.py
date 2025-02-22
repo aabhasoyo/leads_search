@@ -318,8 +318,6 @@ if share_link:
     # Display shareable link
     st.markdown("### 🔗 Your Shareable Link")
     st.code(share_link, language="markdown")  # ✅ Neat display
-    st.text_input("📋 Copy Link", share_link, key="shareable_link")  # ✅ Allows easy copying
-
 else:
     st.warning("⚠️ No valid filters selected to generate a shareable link.")
     

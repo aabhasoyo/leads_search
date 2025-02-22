@@ -262,7 +262,7 @@ else:
 
 # Generate the link
 share_link = generate_share_link()
-st.write("Debug:", st.session_state)
+# st.write("Debug:", st.session_state)
 
 # Display the link only if it's valid
 if share_link:

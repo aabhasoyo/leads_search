@@ -10,6 +10,11 @@ import urllib.parse
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False  # Set default if missing
 
+# Check if the user came from a shareable link
+query_params = st.query_params.to_dict()
+if "shared" in query_params:  # Example: ?shared=true in URL
+    st.session_state.authenticated = True  # Allow access from a shared link
+
 if not st.session_state.authenticated:
     st.warning("Please authenticate to view leads.")
     st.stop()

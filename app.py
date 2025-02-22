@@ -7,15 +7,27 @@ import numpy as np
 import base64
 import urllib.parse
 
-import streamlit as st
+# Load dataset
+@st.cache_data
+def load_data():
+    return pd.read_csv("properties.csv", encoding="ISO-8859-1")
 
-# Ensure authentication state exists
-if "authenticated" not in st.session_state:
-    st.session_state.authenticated = False  # Default to False
+data = load_data()
+
+# Build KDTree for fast spatial search
+def build_tree(data):
+    coords = data[['Latitude', 'Longitude']].to_numpy()
+    return cKDTree(coords), coords
+
+tree, coords = build_tree(data)
 
 # Check if the user came from a shareable link
 query_params = st.query_params.to_dict()
 shared_mode = "shared" in query_params  # Example: ?shared=true in URL
+
+# Ensure authentication state exists
+if "authenticated" not in st.session_state:
+    st.session_state.authenticated = False  # Default to False
 
 if shared_mode:
     st.session_state.authenticated = True  # Allow access from a shared link
@@ -149,20 +161,6 @@ if not shared_mode and not st.session_state.authenticated:
             st.error("Invalid username or password")
 
     st.stop()
-
-# Load dataset
-@st.cache_data
-def load_data():
-    return pd.read_csv("properties.csv", encoding="ISO-8859-1")
-
-data = load_data()
-
-# Build KDTree for fast spatial search
-def build_tree(data):
-    coords = data[['Latitude', 'Longitude']].to_numpy()
-    return cKDTree(coords), coords
-
-tree, coords = build_tree(data)
 
 # Custom Styling
 st.markdown("""

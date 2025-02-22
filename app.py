@@ -6,6 +6,7 @@ from scipy.spatial import cKDTree
 import numpy as np
 import base64
 import urllib.parse
+import pyperclip
 
 # Load dataset
 @st.cache_data
@@ -316,21 +317,15 @@ if share_link:
     share_link = f"{share_link}&shared=true"  # ✅ Ensuring shared=true is appended
 
     # Display the shareable link inside a text input (readonly)
-    link_input = st.text_input("🔗 Your Shareable Link", share_link, key="shareable_link")
+    st.text_input("🔗 Your Shareable Link", share_link, key="shareable_link")
 
-    # Add a copy-to-clipboard button using JavaScript
-    st.markdown(
-        f"""
-        <button onclick="navigator.clipboard.writeText('{share_link}')" 
-        style="padding: 5px 10px; font-size: 14px; background-color: #4CAF50; color: white; border: none; cursor: pointer; border-radius: 5px; margin-top: 5px;">
-            📋 Copy Link
-        </button>
-        """,
-        unsafe_allow_html=True
-    )
+    # Add a Copy button
+    if st.button("📋 Copy Link"):
+        pyperclip.copy(share_link)
+        st.success("✅ Link copied to clipboard!")
 else:
     st.warning("No valid filters selected to generate a shareable link.")
-
+    
 # st.write("Debug:", st.session_state)  # Debugging info
 
     

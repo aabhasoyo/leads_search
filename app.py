@@ -256,7 +256,7 @@ def generate_share_link():
 share_link = generate_share_link()
 
 if share_link:
-    st.text_input("🔗 Shareable Link", share_link)
+   st.text_input("🔗 Your Shareable Link", share_link, key="shareable_link")
 else:
     st.warning("No valid filters selected to generate a shareable link.")
 

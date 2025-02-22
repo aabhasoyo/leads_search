@@ -318,11 +318,10 @@ if share_link:
     # Display the shareable link inside a text input (readonly)
     link_input = st.text_input("🔗 Your Shareable Link", share_link, key="shareable_link")
 
-    # Native Streamlit Copy Button using JavaScript in a hidden text area
-    st.markdown(
-        """
+    # Render Copy Button Only if a Valid Link Exists
+    copy_button_html = f"""
         <style>
-        .copy-btn {
+        .copy-btn {{
             background-color: #008CBA; 
             color: white; 
             border: none; 
@@ -330,9 +329,9 @@ if share_link:
             border-radius: 5px; 
             cursor: pointer; 
             font-size: 14px;
-        }
+        }}
         </style>
-        <textarea id="copyText" style="position: absolute; left: -9999px;">{}</textarea>
+        <textarea id="copyText" style="position: absolute; left: -9999px;">{share_link}</textarea>
         <button class="copy-btn" onclick="copyFunction()">📋 Copy Link</button>
 
         <script>
@@ -343,9 +342,10 @@ if share_link:
             alert("✅ Link copied to clipboard!");
         }}
         </script>
-        """.format(share_link),
-        unsafe_allow_html=True
-    )
+    """
+
+    st.markdown(copy_button_html, unsafe_allow_html=True)
+
 else:
     st.warning("No valid filters selected to generate a shareable link.")
     

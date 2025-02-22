@@ -36,7 +36,7 @@ if shared_mode:
     if "lat" in query_params and "lng" in query_params:
         st.session_state["search_type"] = "📍 Latitude/Longitude"
     elif "country" in query_params:
-        st.session_state["search_type"] = "🌍 Location"s
+        st.session_state["search_type"] = "🌍 Location"
 
 # If not shared mode and not authenticated, show login form
 if not shared_mode and not st.session_state.authenticated:

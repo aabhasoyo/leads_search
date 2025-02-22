@@ -315,7 +315,7 @@ copy_button = """
     style="background: none; border: none; cursor: pointer;">
         📋
     </button>
-""".format(shareable_link)
+""".format(share_link)
 
 # Show the button using st.markdown
 st.markdown(copy_button, unsafe_allow_html=True)

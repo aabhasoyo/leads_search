@@ -274,7 +274,7 @@ st.markdown(styled_table, unsafe_allow_html=True)
 st.subheader("📤 Export & Share")
 csv_data = results.to_csv(index=False).encode('utf-8')
 b64 = base64.b64encode(csv_data).decode()
-href = f'<a href="data:file/csv;base64,{b64}" download="filtered_results.csv" style="display: inline-block; padding: 10px 20px; font-size: 16px; font-weight: bold; color: white; background-color: #ff4b4b; text-decoration: none; border-radius: 2px; text-align: center;">⬇ Download CSV</a>'
+href = f'<a href="data:file/csv;base64,{b64}" download="filtered_results.csv" style="display: inline-block; padding: 5px 10px; font-size: 16px; font-weight: bold; color: white; background-color: #ff4b4b; text-decoration: none; border-radius: 5px; text-align: center;">⬇ Download CSV</a>'
 st.markdown(href, unsafe_allow_html=True)
 
 # Function to generate shareable link

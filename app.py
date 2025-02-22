@@ -8,7 +8,7 @@ import base64
 import urllib.parse
 
 if "authenticated" not in st.session_state:
-    st.session_state.authenticated = False  # Set default if missing
+    st.session_state.authenticated = True  # Set default if missing
 
 # Check if the user came from a shareable link
 query_params = st.query_params.to_dict()

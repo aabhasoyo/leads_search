@@ -314,11 +314,11 @@ share_link = generate_share_link()
 
 if share_link:
     share_link = f"{share_link}&shared=true"  # ✅ Ensuring correct link format
-    
-    # Display link in a user-friendly way
+
+    # Display shareable link
     st.markdown("### 🔗 Your Shareable Link")
-    st.code(share_link, language="markdown")  # ✅ Better visual format
-    st.text_input("📋 Click & Copy", share_link, key="shareable_link", use_container_width=True)
+    st.code(share_link, language="markdown")  # ✅ Neat display
+    st.text_input("📋 Copy Link", share_link, key="shareable_link")  # ✅ Allows easy copying
 
 else:
     st.warning("⚠️ No valid filters selected to generate a shareable link.")

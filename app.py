@@ -108,10 +108,10 @@ if shared_mode:
     results = pd.DataFrame()  # Ensure results is always defined
 
     if "lat" in query_params and "lng" in query_params:
-        lat = float(query_params.get("lat", [0])[0])  
-        lng = float(query_params.get("lng", [0])[0])
-        radius = float(query_params.get("radius", [10])[0])
-
+        lat = float(query_params.get("lat", 0))
+        lng = float(query_params.get("lng", 0))
+        radius = float(query_params.get("radius", 10))
+        
         query_point = np.array([lat, lng])
 
         # 🔹 Ensure `tree` is initialized before using it
@@ -127,11 +127,13 @@ if shared_mode:
         results.sort_values(by="Distance (km)", inplace=True)
 
     if "country" in query_params:
-        country = query_params["country"][0]
-        region = query_params.get("region", ["All"])[0]
+        country = query_params.get("country", "")
+        region = query_params.get("region", "All")
+
+        # region = query_params.get("region", ["All"])[0]
 
         results = data[data["Country"] == country].copy() if region == "All" else data[
-            (data["Country"] == country) & (data["Region"] == region)
+        (data["Country"] == country) & (data["Region"] == region)
         ]
 
     # If filters exist for Source, Email, or Phone

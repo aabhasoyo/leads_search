@@ -254,4 +254,6 @@ else:
     
 # Footer
 st.markdown("<hr>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center;'>🚀 Developed by Aabhas</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; font-size: 16px; font-weight: bold;'>Powered by Belvilla</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; font-size: 12px; color: gray;'>Developed by Aabhas</p>", unsafe_allow_html=True)
+

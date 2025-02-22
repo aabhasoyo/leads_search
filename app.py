@@ -263,12 +263,6 @@ else:
 # Generate the link
 share_link = generate_share_link()
 # st.write("Debug:", st.session_state)
-
-# Display the link only if it's valid
-if share_link:
-    st.text_input("🔗 Shareable Link", share_link)
-else:
-    st.warning("No valid filters selected to generate a shareable link.")
     
 # Footer
 st.markdown("""

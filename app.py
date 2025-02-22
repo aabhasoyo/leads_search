@@ -316,24 +316,36 @@ if share_link:
     share_link = f"{share_link}&shared=true"  # ✅ Ensuring shared=true is appended
 
     # Display the shareable link inside a text input (readonly)
-    st.text_input("🔗 Your Shareable Link", share_link, key="shareable_link")
+    link_input = st.text_input("🔗 Your Shareable Link", share_link, key="shareable_link")
 
-    # JavaScript Copy Button
-    copy_script = f"""
-    <script>
-        function copyToClipboard() {{
-            navigator.clipboard.writeText("{share_link}").then(() => {{
-                alert("✅ Link copied to clipboard!");
-            }});
+    # Native Streamlit Copy Button using JavaScript in a hidden text area
+    st.markdown(
+        """
+        <style>
+        .copy-btn {
+            background-color: #008CBA; 
+            color: white; 
+            border: none; 
+            padding: 8px 15px; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            font-size: 14px;
+        }
+        </style>
+        <textarea id="copyText" style="position: absolute; left: -9999px;">{}</textarea>
+        <button class="copy-btn" onclick="copyFunction()">📋 Copy Link</button>
+
+        <script>
+        function copyFunction() {{
+            var copyText = document.getElementById("copyText");
+            copyText.select();
+            document.execCommand("copy");
+            alert("✅ Link copied to clipboard!");
         }}
-    </script>
-    <button onclick="copyToClipboard()" style="background:#008CBA; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer;">
-        📋 Copy Link
-    </button>
-    """
-
-    st.markdown(copy_script, unsafe_allow_html=True)
-
+        </script>
+        """.format(share_link),
+        unsafe_allow_html=True
+    )
 else:
     st.warning("No valid filters selected to generate a shareable link.")
     

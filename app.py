@@ -253,7 +253,8 @@ else:
     st.warning("No valid filters selected to generate a shareable link.")
     
 # Footer
-st.markdown("<hr>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center;'>🚀 Powered by Belvilla</p>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; font-size: 12px; color: gray;'>Developed by Aabhas</p>", unsafe_allow_html=True)
-
+st.markdown("""
+    <hr>
+    <p style='text-align: center; font-size: 14px; margin-bottom: 2px;'>🚀 Powered by Belvilla</p>
+    <p style='text-align: center; font-size: 12px; color: gray; margin-top: 0px;'>Developed by Aabhas</p>
+""", unsafe_allow_html=True)

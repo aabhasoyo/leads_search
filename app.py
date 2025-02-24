@@ -259,6 +259,7 @@ st.markdown("""
         @media (prefers-color-scheme: dark) {
             table { color: #ddd; }  /* Light text in dark mode */
             th { background-color: #388E3C; } /* Darker green for dark mode */
+            td { colour:white; }
             tr:hover { background-color: rgba(200, 200, 200, 0.2) !important; } /* Light gray hover for dark mode */
         }
     </style>

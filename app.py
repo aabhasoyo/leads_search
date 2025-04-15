@@ -7,6 +7,9 @@ import numpy as np
 import base64
 import urllib.parse
 
+ALLOWED_TOKENS = ["abc123", "xyz789"]  # You can change these to real ones
+DEFAULT_TOKEN = "abc123"  # This will be used in generated links
+
 params = st.query_params
 token = params.get("token", [None])[0]
 
@@ -14,8 +17,6 @@ if token not in ALLOWED_TOKENS:
     st.error("🚫 Access Denied: Invalid or missing token.")
     st.stop()
 
-AALLOWED_TOKENS = ["abc123", "xyz789"]  # You can change these to real ones
-DEFAULT_TOKEN = "abc123"  # This will be used in generated links
 
 # Load dataset
 @st.cache_data

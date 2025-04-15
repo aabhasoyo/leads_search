@@ -7,6 +7,16 @@ import numpy as np
 import base64
 import urllib.parse
 
+params = st.query_params
+token = params.get("token", [None])[0]
+
+if token not in ALLOWED_TOKENS:
+    st.error("🚫 Access Denied: Invalid or missing token.")
+    st.stop()
+
+AALLOWED_TOKENS = ["abc123", "xyz789"]  # You can change these to real ones
+DEFAULT_TOKEN = "abc123"  # This will be used in generated links
+
 # Load dataset
 @st.cache_data
 def load_data():
@@ -280,7 +290,7 @@ st.markdown(href, unsafe_allow_html=True)
 
 # Function to generate shareable link
 def generate_share_link():
-    base_url = "https://oyoleads.streamlit.app/?"  # Your actual app URL
+    base_url = "https://oyoleads.streamlit.app/?" 
     params = {}
 
     # Retrieve values from session state
@@ -306,7 +316,10 @@ def generate_share_link():
             params["region"] = region
 
     if not params:
-        return None  # No valid filters, prevent broken links
+        return None 
+
+    params["token"] = DEFAULT_TOKEN
+    params["shared"] = "true"
 
     return base_url + urllib.parse.urlencode(params, doseq=True)
 

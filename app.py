@@ -14,6 +14,12 @@ def load_data():
 
 data = load_data()
 
+# If lead_status column doesn't exist, add it
+if 'lead_status' not in data.columns:
+    data['lead_status'] = 'Not Reviewed'
+    data.to_csv("properties.csv", index=False)
+
+
 # Build KDTree for fast spatial search
 def build_tree(data):
     coords = data[['Latitude', 'Longitude']].to_numpy()
@@ -170,6 +176,24 @@ st.markdown("""
         a { text-decoration: none !important; }
     </style>
 """, unsafe_allow_html=True)
+
+# Allow lead status update (only in authenticated mode, not shared)
+if not shared_mode and st.session_state.authenticated and not results.empty:
+    st.markdown("### ✏️ Update Lead Status")
+
+    # Select a lead by its Name (or other unique identifier if needed)
+    selected_lead = st.selectbox("Select a property to update", results["Name"].unique())
+
+    # Show current status and allow editing
+    current_status = data.loc[data["Name"] == selected_lead, "lead_status"].values[0]
+    new_status = st.selectbox("Update Status", ["Not Reviewed", "In Progress", "Rejected", "Signed"], index=["Not Reviewed", "In Progress", "Rejected", "Signed"].index(current_status))
+
+    if st.button("💾 Save Status"):
+        # Update in the full dataset
+        data.loc[data["Name"] == selected_lead, "lead_status"] = new_status
+        data.to_csv("leads.csv", index=False)
+        st.success(f"✅ Lead status updated to '{new_status}' for '{selected_lead}'!")
+
 
 # Title and Description
 st.markdown("<h1 style='text-align: center; color: #4CAF50;'>Leads Search Portal</h1>", unsafe_allow_html=True)

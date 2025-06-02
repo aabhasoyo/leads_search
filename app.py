@@ -10,23 +10,27 @@ import urllib.parse
 import streamlit as st
 import pandas as pd
 from pathlib import Path
-from oyoms import WorkbookClient
+# from oyoms import WorkbookClient
 
 # Load data from OYO MS Excel
+# @st.cache_data
+# def load_data():
+#     # SharePoint Excel link
+#     excel_link = (
+#         "https://oyoenterprise-my.sharepoint.com/:x:/g/personal/aabhas_agrawal_oyorooms_com/ESaDPGPAZlRAltmi70oKMyEBxKh5geE_bykJIy7Fv2qBiQ?e=UfOGFe"
+#     )
+
+#     # Initialize workbook client
+#     wb = WorkbookClient("aabhas.agrawal@oyorooms.com", excel_link)
+
+#     # Read Excel data (modify sheet name/range if needed)
+#     df = wb.get_range_data("Sheet1", "Sheet1!A1:O16000")
+
+#     return df
+
 @st.cache_data
 def load_data():
-    # SharePoint Excel link
-    excel_link = (
-        "https://oyoenterprise-my.sharepoint.com/:x:/g/personal/aabhas_agrawal_oyorooms_com/ESaDPGPAZlRAltmi70oKMyEBxKh5geE_bykJIy7Fv2qBiQ?e=UfOGFe"
-    )
-
-    # Initialize workbook client
-    wb = WorkbookClient("aabhas.agrawal@oyorooms.com", excel_link)
-
-    # Read Excel data (modify sheet name/range if needed)
-    df = wb.get_range_data("Sheet1", "Sheet1!A1:O16000")
-
-    return df
+    return pd.read_csv("properties.csv", encoding="ISO-8859-1")
 
 data = load_data()
 

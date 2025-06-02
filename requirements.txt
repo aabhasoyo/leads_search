@@ -4,4 +4,3 @@ folium
 streamlit-folium
 scipy
 numpy
-oyoms
